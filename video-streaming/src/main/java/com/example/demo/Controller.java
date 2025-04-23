@@ -1,40 +1,66 @@
 package com.example.demo;
 
 
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/video")
+@Configuration
 public class Controller {
+    @Autowired
+    private RabbitTemplate template;
+    @Autowired
+    private Queue queue;
+    @Autowired
+    private ResourceLoader resourceLoader;
+    private final Resource resource;
+    private static final String FORMAT = "classpath:videos/%s.mp4";
+    String VIDEO_STORAGE_PORT = System.getenv("VIDEO_STORAGE_PORT");
+    String VIDEO_STORAGE_HOST = System.getenv("VIDEO_STORAGE_HOST");
+    String HISTORY_HOST = System.getenv("HISTORY_HOST");
+    String HISTORY_PORT = System.getenv("HISTORY_PORT");
 
-
-    private final ResourceLoader resourceLoader;
-
-    public Controller(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
+    public Controller(ResourceLoader resourceLoader, RestClient.Builder restClientBuilder) {
+      //  RestClient restClientStorage = restClientBuilder.baseUrl(String.format("http://%s:%s", VIDEO_STORAGE_HOST, VIDEO_STORAGE_PORT)).build();
+      //  this.restClientHistory = restClientBuilder.baseUrl(String.format("http://%s:%s", HISTORY_HOST, HISTORY_PORT)).build();
+        String videoPath = "samplevideo.mp4";
+        this.resource = new ClassPathResource("video/" + videoPath);
+    }
+    public void sendViewedMessage(String videoPath) {
+        template.convertAndSend("spring-boot", videoPath);
     }
 
-    @GetMapping("/1")
-    public ResponseEntity<Resource> streamVideo() throws IOException {
 
-        InputStream inputStream = resourceLoader.getResource("classpath:\\video\\SampleVideo_1280x720_10mb.mp4").getInputStream();
-        byte[] data = inputStream.readAllBytes();
+    @GetMapping(path = "/1", produces = "video/mp4")
+    public ResponseEntity<Resource> streamVideo(@RequestParam String id, @RequestHeader Map<String, String> headers) throws IOException {
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .header(HttpHeaders.CONTENT_TYPE, "video/mp4")
-                .body(new ByteArrayResource(data));
+        if (!headers.containsKey("range")) {
+            try {
+                sendViewedMessage(id);
+            } catch (Exception ex) {
+                System.out.println("unable to connect to history service");
+            }
+        }
+        // String result = persistenceLayer.findSomething("hola");
+        //   String result = persistenceLayer.findSomething("123");
+        //    Optional<VideoData> videoDataOptional = videoRepository.findById(id);
+
+
+        return ResponseEntity.status(HttpStatus.OK).header("Accept-Ranges", "bytes").header("Content-Type", "video/mp4").body(resource);
+//        return videoDataOptional.map(videoData -> this.restClientStorage.get().uri("/video?videoId={id}", videoData.videoPath).retrieve().toEntity(Resource.class))
+//                .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
 }
