@@ -27,15 +27,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Build
-        run: ./scripts/build-image.sh
+        run: .video-streaming/scripts/build-image.sh
 
       - name: Publish
-        run: ./scripts/push-image.sh
+        run: .video-streaming/scripts/push-image.sh
 
       - uses: tale/kubectl-action@v1
         with:
           base64-kube-config: ${{ secrets.KUBE_CONFIG }}
           kubectl-version: v1.24.2
+      #
+      # Expands the configuration template and deploys the microservice.
+      #
+      - name: Deploy
+        run: ./scripts/deploy.sh
 #    steps:
 #    - uses: actions/checkout@v4
 #    - name: Set up JDK 23
