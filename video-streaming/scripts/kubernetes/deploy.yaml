@@ -20,8 +20,8 @@ spec:
     spec:
       containers:
         - name: video-streaming
-          image: video-streaming:1
-          imagePullPolicy: Never
+          image: $CONTAINER_REGISTRY/video-streaming:$VERSION
+          imagePullPolicy: IfNotPresent
 ---
 apiVersion: v1
 kind: Service
@@ -34,5 +34,5 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 8081
-      nodePort: 30000
+      targetPort: 4000
+#      nodePort: 30000
