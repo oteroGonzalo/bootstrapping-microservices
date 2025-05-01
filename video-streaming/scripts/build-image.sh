@@ -15,4 +15,4 @@ set -u
 : "$CONTAINER_REGISTRY"
 : "$VERSION"
 
-docker build -t $CONTAINER_REGISTRY/video-streaming:$VERSION --file ./Dockerfile .
+docker build -t $CONTAINER_REGISTRY/video-streaming:$VERSION --file ./video-streaming/Dockerfile .
