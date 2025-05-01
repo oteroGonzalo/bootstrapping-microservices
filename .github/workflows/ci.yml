@@ -35,6 +35,8 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file ./video-streaming/pom.xml
 
+      - name: debug
+        run: pwd
       - name: Build
         run: ./video-streaming/scripts/build-image.sh
 
