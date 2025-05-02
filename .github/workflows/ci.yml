@@ -26,6 +26,7 @@ jobs:
       REGISTRY_PW: ${{ secrets.REGISTRY_PW  }}
       GKE_CLUSTER: 'hello-cluster'
       GKE_ZONE: 'us-central1'
+      WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER  }}
 
     steps:
       - uses: actions/checkout@v4
@@ -49,6 +50,16 @@ jobs:
 
       - name: Publish
         run: ./video-streaming/scripts/push-image.sh
+
+      # Configure Workload Identity Federation and generate an access token.
+      #
+      # See https://github.com/google-github-actions/auth for more options,
+      # including authenticating via a JSON credentials file.
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@f112390a2df9932162083945e46d439060d66ec2' # google-github-actions/auth@v2
+        with:
+          workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
 
       - name: 'Set up GKE credentials'
         uses: 'google-github-actions/get-gke-credentials@6051de21ad50fbb1767bc93c11357a49082ad116' # google-github-actions/get-gke-credentials@v2
