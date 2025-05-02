@@ -23,6 +23,8 @@ jobs:
       CONTAINER_REGISTRY: ${{ secrets.CONTAINER_REGISTRY }}
       REGISTRY_UN: ${{ secrets.REGISTRY_UN }}
       REGISTRY_PW: ${{ secrets.REGISTRY_PW  }}
+      GKE_CLUSTER: 'hello-cluster'
+      GKE_ZONE: 'us-central1'
 
     steps:
       - uses: actions/checkout@v4
@@ -47,8 +49,11 @@ jobs:
       - name: Publish
         run: ./video-streaming/scripts/push-image.sh
 
-      - name: Install gke-gcloud-auth-plugin
-        run: apt-get install google-cloud-sdk-gke-gcloud-auth-plugin
+      - name: 'Set up GKE credentials'
+        uses: 'google-github-actions/get-gke-credentials@6051de21ad50fbb1767bc93c11357a49082ad116' # google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: '${{ env.GKE_CLUSTER }}'
+          location: '${{ env.GKE_ZONE }}'
 
       - uses: tale/kubectl-action@v1
         with:
