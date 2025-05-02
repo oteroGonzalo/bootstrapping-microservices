@@ -28,6 +28,10 @@ jobs:
       GKE_ZONE: 'us-central1'
       WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER  }}
 
+      permissions:
+        contents: 'read'
+        id-token: 'write'
+
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 23
@@ -38,6 +42,7 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn -B package --file ./video-streaming/pom.xml
+
 
       
       - name: Docker login
