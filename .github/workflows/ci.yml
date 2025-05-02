@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       VERSION: ${{ github.sha }}
-      PROJECT_ID: 'swift-surf-340917'
+      GCLOUD_PROJECT: 'swift-surf-340917'
       CONTAINER_REGISTRY: ${{ secrets.CONTAINER_REGISTRY }}
       REGISTRY_UN: ${{ secrets.REGISTRY_UN }}
       REGISTRY_PW: ${{ secrets.REGISTRY_PW  }}
