@@ -28,9 +28,9 @@ jobs:
       GKE_ZONE: 'us-central1'
       WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER  }}
 
-      permissions:
-        contents: 'read'
-        id-token: 'write'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
 
     steps:
       - uses: actions/checkout@v4
