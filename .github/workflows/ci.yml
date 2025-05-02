@@ -21,6 +21,7 @@ jobs:
     env:
       VERSION: ${{ github.sha }}
       GCLOUD_PROJECT: 'swift-surf-340917'
+      PROJECT_ID: 'swift-surf-340917'
       CONTAINER_REGISTRY: ${{ secrets.CONTAINER_REGISTRY }}
       REGISTRY_UN: ${{ secrets.REGISTRY_UN }}
       REGISTRY_PW: ${{ secrets.REGISTRY_PW  }}
@@ -71,6 +72,7 @@ jobs:
         with:
           cluster_name: '${{ env.GKE_CLUSTER }}'
           location: '${{ env.GKE_ZONE }}'
+          project_id: '${{ env.PROJECT_ID }}'
 
       - uses: tale/kubectl-action@v1
         with:
