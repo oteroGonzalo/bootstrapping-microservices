@@ -36,7 +36,7 @@ public class Controller {
       //  this.restClientHistory = restClientBuilder.baseUrl(String.format("http://%s:%s", HISTORY_HOST, HISTORY_PORT)).build();
         String videoPath = "samplevideo.mp4";
 //        this.resource = new ClassPathResource("classpath:video/" + videoPath);
-        this.resource = resourceLoader.getResource("classpath:video/samplevideo.mp4");
+        this.resource = resourceLoader.getResource("classpath:samplevideo.mp4");
     }
     public void sendViewedMessage(String videoPath) {
         template.convertAndSend("spring-boot", videoPath);
