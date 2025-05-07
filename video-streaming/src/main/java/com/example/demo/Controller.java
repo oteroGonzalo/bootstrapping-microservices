@@ -24,7 +24,7 @@ public class Controller {
     private Queue queue;
     @Autowired
     private ResourceLoader resourceLoader;
-    private final InputStreamResource resource;
+    private final Resource resource;
     private static final String FORMAT = "classpath:videos/%s.mp4";
     String VIDEO_STORAGE_PORT = System.getenv("VIDEO_STORAGE_PORT");
     String VIDEO_STORAGE_HOST = System.getenv("VIDEO_STORAGE_HOST");
@@ -36,7 +36,7 @@ public class Controller {
       //  this.restClientHistory = restClientBuilder.baseUrl(String.format("http://%s:%s", HISTORY_HOST, HISTORY_PORT)).build();
         String videoPath = "samplevideo.mp4";
 //        this.resource = new ClassPathResource("classpath:video/" + videoPath);
-        this.resource =  new InputStreamResource(getClass().getResourceAsStream("video/sample"));
+        this.resource = resourceLoader.getResource("classpath:video/" + videoPath);
     }
     public void sendViewedMessage(String videoPath) {
         template.convertAndSend("spring-boot", videoPath);
