@@ -34,15 +34,20 @@ public class Controller {
     public Controller(ResourceLoader resourceLoader, RestClient.Builder restClientBuilder, RabbitTemplate template) {
         this.template = template;
         //  RestClient restClientStorage = restClientBuilder.baseUrl(String.format("http://%s:%s", VIDEO_STORAGE_HOST, VIDEO_STORAGE_PORT)).build();
-      //  this.restClientHistory = restClientBuilder.baseUrl(String.format("http://%s:%s", HISTORY_HOST, HISTORY_PORT)).build();
+        //  this.restClientHistory = restClientBuilder.baseUrl(String.format("http://%s:%s", HISTORY_HOST, HISTORY_PORT)).build();
         String videoPath = "samplevideo.mp4";
 //        this.resource = new ClassPathResource("classpath:video/" + videoPath);
         this.resource = resourceLoader.getResource("classpath:video/samplevideo.mp4");
     }
+
     public void sendViewedMessage(String videoPath) {
         template.convertAndSend("spring-boot", videoPath);
     }
 
+    @GetMapping(path = "/2")
+    public String streamVideo() throws IOException {
+        return "hola";
+    }
 
     @GetMapping(path = "/1", produces = "video/mp4")
     public ResponseEntity<Resource> streamVideo(@RequestParam String id, @RequestHeader Map<String, String> headers) throws IOException {
